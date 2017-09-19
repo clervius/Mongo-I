@@ -15,7 +15,7 @@ server.use(cors());
 server.post('/users', (req, res) => {
     const { fullName, email, age, password } = req.body;
     if(!fullName || !email || !password ) {
-        res.status(422).send({error: "You are missing one of the important components to create a user"})
+        res.status(422).send({error: "You are missing one of the important components to create a user"});
         return;
     }
     const newUser = new User({ fullName, email, age, password });
@@ -23,9 +23,8 @@ server.post('/users', (req, res) => {
         if (err) {
             res.status(500).send(err);
             return;
-        } else {
-            res.json(user);
         }
+        res.json(user);
     })
 });
 
@@ -36,51 +35,47 @@ server.get('/users', (req, res) => {
             if (err) {
                 res.status(500).send(err);
                 return;
-            } else {
-                res.json(users);
             }
-
-        })
+            res.json(users);
+        });
 });
 
 server.get('/users/:id', (req, res) => {
+    const { id } = req.params;
     User
-        .findById(req.params.id)
+        .findById(id)
         .exec((err, user) => {
             if (err) {
                 res.status(500).send(err);
-            } else {
-                res.json(user);
+                return;
             }
+            res.json(user);
         })
 });
 
 server.put('/users/:id', (req, res) => {
-    User
-        .findByIdAndUpdate(req.params.id, 
+    const { id } = req.params;
+    User.findByIdAndUpdate(id, 
             { $set: req.body }, 
             { new:true, upsert: true, safe: true}, 
             (err, response) => {
                 if (err) {
                     res.status(500).send(err);
                     return;
-                } else {
-                    res.json(response);
-                }
-            })
+                };
+                res.json(response);
+            });
 
 });
 
 server.delete('/users/:id', (req, res) => {
-    User
-        .findByIdAndRemove(req.params.id, 
-            (err, response) => {
+    const { id } = req.params;
+    User.findByIdAndRemove(id, (err, response) => {
                 if (err) {
                     res.status(500).send(err);
-                } else {
-                    res.json(response);
                 }
-            })
+                res.json(response);
+            });
 });
 
 // Blog Posts
@@ -91,26 +86,24 @@ server.post('/posts', (req, res) => {
         if (err) {
             res.status(500).send(err);
             return;
-        } else {
-            res.json(post);
-        }
-    })
+        };
+        res.json(post);
+    });
 });
 
 server.post('/posts/:id/comment', (req, res) => {
+    const { id } = req.params;
     const { author, comment } = req.body;
-    BlogPost
-        .findByIdAndUpdate(req.params.id,             
+    BlogPost.findByIdAndUpdate(id,             
             { $push: { 'comments' : { author, comment }}}, 
             { new: true, upsert: true, safe: true }, 
             (err, response) => {
                 if (err) {
                     res.status(500).send(err);
                     return;
-                } else {
-                    res.json(response);
                 }
-            })
+                res.json(response);
+            });
 });
 
 server.get('/posts', (req, res) => {
@@ -121,51 +114,48 @@ server.get('/posts', (req, res) => {
             if (err) {
                 res.status(500).send(err);
                 return;
-            } else {
-                res.json(posts);
-            }
-        })
+            } 
+            res.json(posts);
+        });
 });
 
 server.get('/posts/:id', (req, res) => {
+    const { id } = req.params;
     BlogPost
-        .findById(req.params.id)
+        .findById(id)
         .populate('author')
         .exec((err,post) => {
             if (err) {
                 res.status(500).send(err);
                 return;
-            } else {
-                res.json(post);
             }
-        })
+            res.json(post);
+        });
 });
 
 server.put('/posts/:id', (req, res) => {
-    BlogPost
-        .findByIdAndUpdate(req.params.id, 
+    const { id } = req.params;
+    BlogPost.findByIdAndUpdate(id, 
             { $set: req.body }, 
             { new: true, upsert: true, safe: true }, 
             (err, response) => {
                 if (err) {
                     res.status(500).send(err);
                     return;
-                } else {
-                    res.json(response);
                 }
-            })
+                res.json(response);
+            });
 });
 
 server.delete('/posts/:id', (req, res) => {
-    BlogPost
-        .findByIdAndRemove(req.params.id, (err, response) => {
+    const { id } = req.params;
+    BlogPost.findByIdAndRemove(id, (err, response) => {
             if (err) {
                 res.status(500).send(err);
                 return;
-            } else {
-                res.json(response);
-            }
-        })
+            } 
+            res.json(response);
+        });
 });
 
 
